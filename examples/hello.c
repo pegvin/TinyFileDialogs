@@ -1,30 +1,27 @@
 /*
-- Here is the Hello World:
+  Here is the Hello World Example:
     if a console is missing, it will use graphic dialogs
     if a graphical display is absent, it will use console dialogs
-		(on windows the input box may take some time to open the first time)
-*/
+    (on windows the input box may take some time to open the first time)
 
+  Compiling The Below Program with MSVC or something like that, you might get warnings.
+*/
 
 #include <stdio.h>
 #include <string.h>
 #include "tinyfiledialogs.h"
 
-#ifdef _MSC_VER
-#pragma warning(disable:4996) /* silences warnings about strcpy strcat fopen*/
-#endif
-
-int main( int argc , char * argv[] )
-{
+int main(int argc, char* argv[]) {
 	int lIntValue;
-	char const * lPassword;
-	char const * lTheSaveFileName;
-	char const * lTheOpenFileName;
-	char const * lTheSelectFolderName;
-	char const * lTheHexColor;
-	char const * lWillBeGraphicMode;
+	char const* lPassword;
+	char const* lTheSaveFileName;
+	char const* lTheOpenFileName;
+	char const* lTheSelectFolderName;
+	char const* lTheHexColor;
+	char const* lWillBeGraphicMode;
 	unsigned char lRgbColor[3];
-	FILE * lIn;
+
+	FILE* lIn;
 	char lBuffer[1024];
 	char const * lFilterPatterns[2] = { "*.txt", "*.text" };
 
@@ -38,51 +35,45 @@ int main( int argc , char * argv[] )
 
 #ifdef _WIN32
 	 tinyfd_winUtf8 = 1; /* default is 1 */
-/* On windows, you decide if char holds 1:UTF-8(default) or 0:MBCS */
-/* Windows is not ready to handle UTF-8 as many char functions like fopen() expect MBCS filenames.*/
-/* This hello.c file has been prepared, on windows, to convert the filenames from UTF-8 to UTF-16
-   and pass them passed to _wfopen() instead of fopen() */
+	/*
+	   On windows, you decide if char holds 1:UTF-8(default) or 0:MBCS
+	   Windows is not ready to handle UTF-8 as many char functions like fopen() expect MBCS filenames.
+	   This hello.c file has been prepared, on windows, to convert the filenames from UTF-8 to UTF-16
+	   and pass them passed to _wfopen() instead of fopen()
+	*/
 #endif
 
-	/*tinyfd_beep();*/
+	tinyfd_beep();
 
 	lWillBeGraphicMode = tinyfd_inputBox("tinyfd_query", NULL, NULL);
 
 	strcpy(lBuffer, "tinyfiledialogs\nv");
 	strcat(lBuffer, tinyfd_version);
-	if (lWillBeGraphicMode)
-	{
+
+	if (lWillBeGraphicMode) {
 		strcat(lBuffer, "\ngraphic mode: ");
-	}
-	else
-	{
+	} else {
 		strcat(lBuffer, "\nconsole mode: ");
 	}
-	strcat(lBuffer, tinyfd_response);
-	tinyfd_messageBox("hello", lBuffer, "ok", "info", 0);
 
+	strcat(lBuffer, tinyfd_response);
+
+	tinyfd_messageBox("hello", lBuffer, "ok", "info", 0);
 	tinyfd_notifyPopup("the title", "the message\n\tfrom outer-space", "info");
 
-	if ( lWillBeGraphicMode && ! tinyfd_forceConsole )
-	{
-#if 0
-			lIntValue = tinyfd_messageBox("Hello World", "\
-graphic dialogs [Yes]\n\
-console mode [No]\n\
-quit [Cancel]",
-				"yesnocancel", "question", 1);
-			if (!lIntValue) return 1;
-			tinyfd_forceConsole = (lIntValue == 2);
-#else
-			lIntValue = tinyfd_messageBox("Hello World", "graphic dialogs [Yes] / console mode [No]", "yesno", "question", 1);
-			tinyfd_forceConsole = ! lIntValue;
-#endif
+	if (lWillBeGraphicMode && ! tinyfd_forceConsole) {
+		lIntValue = tinyfd_messageBox("Hello World", "graphic dialogs [Yes] / console mode [No]", "yesno", "question", 1);
+		tinyfd_forceConsole = ! lIntValue;
 	}
 
 	lPassword = tinyfd_inputBox(
-		"a password box", "your password will be revealed later", NULL);
+		"a password box",
+		"your password will be revealed later",
+		NULL
+	);
 
-	if (!lPassword) return 1;
+	if (!lPassword)
+		return 1;
 
 	tinyfd_messageBox("your password as read", lPassword, "ok", "info", 1);
 
@@ -91,36 +82,39 @@ quit [Cancel]",
 		"passwordFile.txt",
 		2,
 		lFilterPatterns,
-		NULL);
+		NULL
+	);
 
-	if (! lTheSaveFileName)
-	{
+	if (!lTheSaveFileName) {
 		tinyfd_messageBox(
 			"Error",
 			"Save file name is NULL",
 			"ok",
 			"error",
-			1);
-		return 1 ;
+			1
+		);
+		return 1;
 	}
 
 #ifdef _WIN32
 	if (tinyfd_winUtf8)
-		lIn = _wfopen(tinyfd_utf8to16(lTheSaveFileName), L"w"); /* the UTF-8 filename is converted to UTF-16 to open the file*/
+		// the UTF-8 filename is converted to UTF-16 to open the file
+		lIn = _wfopen(tinyfd_utf8to16(lTheSaveFileName), L"w");
 	else
 #endif
 	lIn = fopen(lTheSaveFileName, "w");
 
-	if (!lIn)
-	{
+	if (!lIn) {
 		tinyfd_messageBox(
 			"Error",
 			"Can not open this file in write mode",
 			"ok",
 			"error",
-			1);
-		return 1 ;
+			1
+		);
+		return 1;
 	}
+
 	fputs(lPassword, lIn);
 	fclose(lIn);
 
@@ -130,35 +124,37 @@ quit [Cancel]",
 		2,
 		lFilterPatterns,
 		NULL,
-		0);
+		0
+	);
 
-	if (! lTheOpenFileName)
-	{
+	if (!lTheOpenFileName) {
 		tinyfd_messageBox(
 			"Error",
 			"Open file name is NULL",
 			"ok",
 			"error",
-			0);
-		return 1 ;
+			0
+		);
+		return 1;
 	}
 
 #ifdef _WIN32
 	if (tinyfd_winUtf8)
-		lIn = _wfopen(tinyfd_utf8to16(lTheOpenFileName), L"r"); /* the UTF-8 filename is converted to UTF-16 */
+		// the UTF-8 filename is converted to UTF-16
+		lIn = _wfopen(tinyfd_utf8to16(lTheOpenFileName), L"r");
 	else
 #endif
 	lIn = fopen(lTheOpenFileName, "r");
 
-	if (!lIn)
-	{
+	if (!lIn) {
 		tinyfd_messageBox(
 			"Error",
 			"Can not open this file in read mode",
 			"ok",
 			"error",
-			1);
-		return(1);
+			1
+		);
+		return 1;
 	}
 
 	lBuffer[0] = '\0';
@@ -167,17 +163,16 @@ quit [Cancel]",
 
 	tinyfd_messageBox("your password as it was saved", lBuffer, "ok", "info", 1);
 
-	lTheSelectFolderName = tinyfd_selectFolderDialog(
-		"let us just select a directory", NULL);
+	lTheSelectFolderName = tinyfd_selectFolderDialog("let us just select a directory", NULL);
 
-	if (!lTheSelectFolderName)
-	{
+	if (!lTheSelectFolderName) {
 		tinyfd_messageBox(
 			"Error",
 			"Select folder name is NULL",
 			"ok",
 			"error",
-			1);
+			1
+		);
 		return 1;
 	}
 
@@ -187,31 +182,26 @@ quit [Cancel]",
 		"choose a nice color",
 		"#FF0077",
 		lRgbColor,
-		lRgbColor);
+		lRgbColor
+	);
 
-	if (!lTheHexColor)
-	{
+	if (!lTheHexColor) {
 		tinyfd_messageBox(
 			"Error",
 			"hexcolor is NULL",
 			"ok",
 			"error",
-			1);
+			1
+		);
 		return 1;
 	}
 
 	tinyfd_messageBox("The selected hexcolor is", lTheHexColor, "ok", "info", 1);
-
 	tinyfd_messageBox("your read password was", lPassword, "ok", "info", 1);
-
 	tinyfd_beep();
 
 	return 0;
 }
-
-#ifdef _MSC_VER
-#pragma warning(default:4996)
-#endif
 
 /*
 OSX :
