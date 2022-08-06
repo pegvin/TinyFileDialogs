@@ -1,0 +1,23 @@
+name: CI
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  Linux-x86_64:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Check out
+      uses: actions/checkout@v2
+
+    - name: Build Examples
+      run: make
+
+  Windows-x86_64:
+    runs-on: windows-2019
+    steps:
+    - name: Check out
+      uses: actions/checkout@v2
+
+    - name: Build Examples
+      run: make
