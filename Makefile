@@ -14,4 +14,4 @@ all:
 
 .PHONY: clean
 clean:
-	rm obj/*.o $(BIN)
+	rm -f $(EXM)/*.elf
